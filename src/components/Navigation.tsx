@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X, GraduationCap, Users, Building, UserCheck, Shield } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
@@ -14,6 +14,7 @@ const Navigation = () => {
     { path: "/faculty", label: "Faculty", icon: UserCheck },
     { path: "/placement", label: "Placement Cell", icon: Shield },
   ];
+
 
   return (
     <nav className="bg-card border-b border-border sticky top-0 z-50">
