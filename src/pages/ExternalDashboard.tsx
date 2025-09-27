@@ -27,14 +27,20 @@ import careerIcons from "@/assets/career-icons.jpg";
 
 const ExternalDashboard = () => {
   const [selectedTab, setSelectedTab] = useState("opportunities");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedRole, setSelectedRole] = useState("all");
+  const [selectedLocation, setSelectedLocation] = useState("all");
+  const [selectedExperience, setSelectedExperience] = useState("all");
 
-  const jobOpportunities = [
+  const allJobOpportunities = [
     {
       id: 1,
       title: "Senior Software Engineer",
+      role: "Software Engineer",
       company: "Amazon",
       type: "Full-time",
       location: "Bengaluru",
+      distance: "0 km",
       salary: "₹25-35 LPA",
       experience: "3-5 years",
       skills: ["React", "Node.js", "AWS", "Microservices"],
@@ -44,9 +50,11 @@ const ExternalDashboard = () => {
     {
       id: 2,
       title: "Data Scientist",
+      role: "Data Scientist",
       company: "Flipkart",
       type: "Full-time",
       location: "Hyderabad",
+      distance: "2 km",
       salary: "₹30-40 LPA",
       experience: "4-6 years",
       skills: ["Python", "Machine Learning", "Deep Learning", "SQL"],
@@ -56,16 +64,85 @@ const ExternalDashboard = () => {
     {
       id: 3,
       title: "Product Manager",
+      role: "Product Manager",
       company: "Microsoft",
       type: "Full-time",
       location: "Mumbai",
+      distance: "5 km",
       salary: "₹35-45 LPA",
       experience: "5-8 years",
       skills: ["Product Strategy", "Analytics", "Leadership", "Agile"],
       description: "Lead product development for enterprise solutions.",
       posted: "3 days ago",
     },
+    {
+      id: 4,
+      title: "UI/UX Designer",
+      role: "UI/UX Designer",
+      company: "Adobe",
+      type: "Full-time",
+      location: "Ahmedabad",
+      distance: "1 km",
+      salary: "₹20-28 LPA",
+      experience: "2-4 years",
+      skills: ["Figma", "Adobe Creative Suite", "User Research", "Prototyping"],
+      description: "Design intuitive user experiences for creative software.",
+      posted: "1 day ago",
+    },
+    {
+      id: 5,
+      title: "Backend Developer",
+      role: "Backend Developer",
+      company: "Paytm",
+      type: "Full-time",
+      location: "Pune",
+      distance: "3 km",
+      salary: "₹18-25 LPA",
+      experience: "2-4 years",
+      skills: ["Node.js", "MongoDB", "Redis", "Microservices"],
+      description: "Build scalable backend systems for fintech applications.",
+      posted: "4 days ago",
+    },
+    {
+      id: 6,
+      title: "Frontend Developer",
+      role: "Frontend Developer",
+      company: "Zomato",
+      type: "Full-time",
+      location: "Ahmedabad",
+      distance: "2 km",
+      salary: "₹15-22 LPA",
+      experience: "1-3 years",
+      skills: ["React", "Vue.js", "TypeScript", "GraphQL"],
+      description: "Create engaging user interfaces for food delivery platform.",
+      posted: "5 days ago",
+    },
   ];
+
+  // Filter opportunities based on search criteria
+  const filteredOpportunities = allJobOpportunities.filter((job) => {
+    const matchesSearch = searchQuery === "" || 
+      job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      job.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      job.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      job.skills.some(skill => skill.toLowerCase().includes(searchQuery.toLowerCase()));
+    
+    const matchesRole = selectedRole === "all" || job.role === selectedRole;
+    const matchesLocation = selectedLocation === "all" || job.location === selectedLocation;
+    const matchesExperience = selectedExperience === "all" || 
+      (selectedExperience === "entry" && job.experience.includes("1-3")) ||
+      (selectedExperience === "mid" && (job.experience.includes("2-4") || job.experience.includes("3-5"))) ||
+      (selectedExperience === "senior" && (job.experience.includes("4-6") || job.experience.includes("5-8")));
+    
+    return matchesSearch && matchesRole && matchesLocation && matchesExperience;
+  });
+
+  // Sort by distance (closest first)
+  const jobOpportunities = filteredOpportunities.sort((a, b) => {
+    const distanceA = parseFloat(a.distance);
+    const distanceB = parseFloat(b.distance);
+    return distanceA - distanceB;
+  });
 
   const mncCompanies = [
     {
@@ -159,36 +236,68 @@ const ExternalDashboard = () => {
 
           {/* Job Opportunities Tab */}
           <TabsContent value="opportunities" className="space-y-6">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex-1">
-                <Input
-                  placeholder="Search job opportunities..."
-                  className="w-full"
-                />
+            <div className="bg-card p-4 rounded-lg border border-border mb-6">
+              <h3 className="text-lg font-semibold mb-4">Find Jobs by Role & Location</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search by role, company, skills..."
+                    className="w-full pl-10"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
+                <Select value={selectedRole} onValueChange={setSelectedRole}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Roles</SelectItem>
+                    <SelectItem value="Software Engineer">Software Engineer</SelectItem>
+                    <SelectItem value="Data Scientist">Data Scientist</SelectItem>
+                    <SelectItem value="Product Manager">Product Manager</SelectItem>
+                    <SelectItem value="UI/UX Designer">UI/UX Designer</SelectItem>
+                    <SelectItem value="Backend Developer">Backend Developer</SelectItem>
+                    <SelectItem value="Frontend Developer">Frontend Developer</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Select value={selectedLocation} onValueChange={setSelectedLocation}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Location" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Locations</SelectItem>
+                    <SelectItem value="Ahmedabad">Ahmedabad</SelectItem>
+                    <SelectItem value="Bengaluru">Bengaluru</SelectItem>
+                    <SelectItem value="Hyderabad">Hyderabad</SelectItem>
+                    <SelectItem value="Mumbai">Mumbai</SelectItem>
+                    <SelectItem value="Pune">Pune</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Select value={selectedExperience} onValueChange={setSelectedExperience}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Experience Level" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Levels</SelectItem>
+                    <SelectItem value="entry">Entry Level (1-3 years)</SelectItem>
+                    <SelectItem value="mid">Mid Level (2-5 years)</SelectItem>
+                    <SelectItem value="senior">Senior Level (4+ years)</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-              <Select>
-                <SelectTrigger className="w-full sm:w-48">
-                  <SelectValue placeholder="Experience Level" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Levels</SelectItem>
-                  <SelectItem value="entry">Entry Level (0-2 years)</SelectItem>
-                  <SelectItem value="mid">Mid Level (3-5 years)</SelectItem>
-                  <SelectItem value="senior">Senior Level (5+ years)</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select>
-                <SelectTrigger className="w-full sm:w-48">
-                  <SelectValue placeholder="Location" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Locations</SelectItem>
-                  <SelectItem value="bangalore">Bengaluru</SelectItem>
-                  <SelectItem value="hyderabad">Hyderabad</SelectItem>
-                  <SelectItem value="mumbai">Mumbai</SelectItem>
-                  <SelectItem value="pune">Pune</SelectItem>
-                </SelectContent>
-              </Select>
+              {(searchQuery || selectedRole !== "all" || selectedLocation !== "all" || selectedExperience !== "all") && (
+                <div className="mt-4 p-3 bg-muted rounded-lg">
+                  <p className="text-sm text-muted-foreground">
+                    Showing {jobOpportunities.length} jobs
+                    {selectedLocation !== "all" && ` near ${selectedLocation}`}
+                    {selectedRole !== "all" && ` for ${selectedRole}`}
+                    {searchQuery && ` matching "${searchQuery}"`}
+                    {jobOpportunities.length > 0 && " (sorted by distance)"}
+                  </p>
+                </div>
+              )}
             </div>
 
             <div className="grid gap-6">
@@ -211,6 +320,9 @@ const ExternalDashboard = () => {
                             <Clock className="h-4 w-4" />
                             {job.posted}
                           </span>
+                          <Badge variant="outline" className="text-xs">
+                            {job.distance} away
+                          </Badge>
                         </CardDescription>
                       </div>
                       <Badge variant="secondary">

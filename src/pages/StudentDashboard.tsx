@@ -26,14 +26,20 @@ import studentsImage from "@/assets/students-working.jpg";
 
 const StudentDashboard = () => {
   const [selectedTab, setSelectedTab] = useState("opportunities");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedRole, setSelectedRole] = useState("all");
+  const [selectedLocation, setSelectedLocation] = useState("all");
+  const [selectedType, setSelectedType] = useState("all");
 
-  const opportunities = [
+  const allOpportunities = [
     {
       id: 1,
       title: "Software Developer Intern",
+      role: "Software Developer",
       company: "Amazon",
       type: "Internship",
       location: "Bengaluru",
+      distance: "0 km",
       stipend: "₹50,000/month",
       deadline: "2024-10-15",
       skills: ["React", "Java", "Python"],
@@ -43,9 +49,11 @@ const StudentDashboard = () => {
     {
       id: 2,
       title: "Data Science Intern",
+      role: "Data Scientist",
       company: "Flipkart",
       type: "Internship",
       location: "Hyderabad",
+      distance: "2 km",
       stipend: "₹45,000/month",
       deadline: "2024-10-20",
       skills: ["Python", "Machine Learning", "SQL"],
@@ -55,16 +63,82 @@ const StudentDashboard = () => {
     {
       id: 3,
       title: "Frontend Developer",
+      role: "Frontend Developer",
       company: "Microsoft",
       type: "Full-time",
       location: "Mumbai",
+      distance: "5 km",
       stipend: "₹12 LPA",
       deadline: "2024-11-01",
       skills: ["React", "TypeScript", "Azure"],
       status: "Eligible",
       description: "Build next-generation web applications for global users.",
     },
+    {
+      id: 4,
+      title: "UI/UX Designer",
+      role: "UI/UX Designer",
+      company: "Zomato",
+      type: "Internship",
+      location: "Ahmedabad",
+      distance: "1 km",
+      stipend: "₹35,000/month",
+      deadline: "2024-10-25",
+      skills: ["Figma", "Adobe XD", "Prototyping"],
+      status: "Eligible",
+      description: "Design user-friendly interfaces for food delivery platform.",
+    },
+    {
+      id: 5,
+      title: "Backend Developer",
+      role: "Backend Developer",
+      company: "Paytm",
+      type: "Full-time",
+      location: "Pune",
+      distance: "3 km",
+      stipend: "₹15 LPA",
+      deadline: "2024-11-05",
+      skills: ["Node.js", "MongoDB", "Redis"],
+      status: "Eligible",
+      description: "Build scalable backend systems for fintech applications.",
+    },
+    {
+      id: 6,
+      title: "Mobile App Developer",
+      role: "Mobile Developer",
+      company: "Swiggy",
+      type: "Internship",
+      location: "Ahmedabad",
+      distance: "4 km",
+      stipend: "₹40,000/month",
+      deadline: "2024-10-30",
+      skills: ["React Native", "Flutter", "Firebase"],
+      status: "Eligible",
+      description: "Develop mobile applications for food delivery services.",
+    },
   ];
+
+  // Filter opportunities based on search criteria
+  const filteredOpportunities = allOpportunities.filter((opportunity) => {
+    const matchesSearch = searchQuery === "" || 
+      opportunity.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      opportunity.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      opportunity.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      opportunity.skills.some(skill => skill.toLowerCase().includes(searchQuery.toLowerCase()));
+    
+    const matchesRole = selectedRole === "all" || opportunity.role === selectedRole;
+    const matchesLocation = selectedLocation === "all" || opportunity.location === selectedLocation;
+    const matchesType = selectedType === "all" || opportunity.type === selectedType;
+    
+    return matchesSearch && matchesRole && matchesLocation && matchesType;
+  });
+
+  // Sort by distance (closest first)
+  const opportunities = filteredOpportunities.sort((a, b) => {
+    const distanceA = parseFloat(a.distance);
+    const distanceB = parseFloat(b.distance);
+    return distanceA - distanceB;
+  });
 
   const applications = [
     {
@@ -149,35 +223,67 @@ const StudentDashboard = () => {
 
           {/* Opportunities Tab */}
           <TabsContent value="opportunities" className="space-y-6">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search opportunities..."
-                  className="w-full pl-10"
-                />
+            <div className="bg-card p-4 rounded-lg border border-border mb-6">
+              <h3 className="text-lg font-semibold mb-4">Find Jobs by Role & Location</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search by role, company, skills..."
+                    className="w-full pl-10"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
+                <Select value={selectedRole} onValueChange={setSelectedRole}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Roles</SelectItem>
+                    <SelectItem value="Software Developer">Software Developer</SelectItem>
+                    <SelectItem value="Data Scientist">Data Scientist</SelectItem>
+                    <SelectItem value="Frontend Developer">Frontend Developer</SelectItem>
+                    <SelectItem value="UI/UX Designer">UI/UX Designer</SelectItem>
+                    <SelectItem value="Backend Developer">Backend Developer</SelectItem>
+                    <SelectItem value="Mobile Developer">Mobile Developer</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Select value={selectedLocation} onValueChange={setSelectedLocation}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Location" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Locations</SelectItem>
+                    <SelectItem value="Ahmedabad">Ahmedabad</SelectItem>
+                    <SelectItem value="Bengaluru">Bengaluru</SelectItem>
+                    <SelectItem value="Hyderabad">Hyderabad</SelectItem>
+                    <SelectItem value="Mumbai">Mumbai</SelectItem>
+                    <SelectItem value="Pune">Pune</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Select value={selectedType} onValueChange={setSelectedType}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Job Type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Types</SelectItem>
+                    <SelectItem value="Internship">Internship</SelectItem>
+                    <SelectItem value="Full-time">Full-time</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-              <Select>
-                <SelectTrigger className="w-full sm:w-48">
-                  <SelectValue placeholder="Filter by type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Types</SelectItem>
-                  <SelectItem value="internship">Internship</SelectItem>
-                  <SelectItem value="fulltime">Full-time</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select>
-                <SelectTrigger className="w-full sm:w-48">
-                  <SelectValue placeholder="Department" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Departments</SelectItem>
-                  <SelectItem value="cs">Computer Science</SelectItem>
-                  <SelectItem value="it">Information Technology</SelectItem>
-                  <SelectItem value="ec">Electronics</SelectItem>
-                </SelectContent>
-              </Select>
+              {(searchQuery || selectedRole !== "all" || selectedLocation !== "all" || selectedType !== "all") && (
+                <div className="mt-4 p-3 bg-muted rounded-lg">
+                  <p className="text-sm text-muted-foreground">
+                    Showing {opportunities.length} opportunities
+                    {selectedLocation !== "all" && ` near ${selectedLocation}`}
+                    {selectedRole !== "all" && ` for ${selectedRole}`}
+                    {searchQuery && ` matching "${searchQuery}"`}
+                    {opportunities.length > 0 && " (sorted by distance)"}
+                  </p>
+                </div>
+              )}
             </div>
 
             <div className="grid gap-6">
@@ -187,11 +293,18 @@ const StudentDashboard = () => {
                     <div className="flex justify-between items-start">
                       <div>
                         <CardTitle className="text-xl">{opportunity.title}</CardTitle>
-                        <CardDescription className="flex items-center gap-2 mt-2">
-                          <Building className="h-4 w-4" />
-                          {opportunity.company}
-                          <MapPin className="h-4 w-4 ml-2" />
-                          {opportunity.location}
+                        <CardDescription className="flex items-center gap-4 mt-2">
+                          <span className="flex items-center gap-1">
+                            <Building className="h-4 w-4" />
+                            {opportunity.company}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <MapPin className="h-4 w-4" />
+                            {opportunity.location}
+                          </span>
+                          <Badge variant="outline" className="text-xs">
+                            {opportunity.distance} away
+                          </Badge>
                         </CardDescription>
                       </div>
                       <Badge className={getStatusColor(opportunity.status)}>
