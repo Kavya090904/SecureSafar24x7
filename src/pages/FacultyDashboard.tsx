@@ -119,9 +119,14 @@ const FacultyDashboard = () => {
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-foreground">Faculty Dashboard</h1>
-              <p className="text-muted-foreground">Manage student applications and provide guidance</p>
+                <h1 className="text-3xl font-bold text-foreground">Mentor Dashboard</h1>
+                <p className="text-muted-foreground">Mentors can manage student applications, provide guidance, and verify student documents.</p>
             </div>
+              <div>
+                <a href="/mentor/verify-documents">
+                  <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Verify Student Documents</button>
+                </a>
+              </div>
             <div className="flex items-center space-x-4">
               <Button variant="outline">
                 <MessageSquare className="mr-2 h-4 w-4" />

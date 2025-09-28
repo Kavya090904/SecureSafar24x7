@@ -437,10 +437,38 @@ const StudentDashboard = () => {
                       <label className="text-sm font-medium">Projects</label>
                       <Input placeholder="Add your project links" />
                     </div>
-                    <Button variant="outline" className="w-full">
-                      <FileText className="mr-2 h-4 w-4" />
-                      Upload Resume
-                    </Button>
+                    <form
+                      className="w-full"
+                      onSubmit={e => e.preventDefault()}
+                    >
+                      <label htmlFor="resume-upload" className="w-full">
+                        <Button variant="outline" className="w-full" asChild>
+                          <span>
+                            <FileText className="mr-2 h-4 w-4" />
+                            Upload Resume
+                          </span>
+                        </Button>
+                        <input
+                          id="resume-upload"
+                          type="file"
+                          accept=".pdf,.docx"
+                          style={{ display: 'none' }}
+                          onChange={async (e) => {
+                            const file = e.target.files?.[0] || null;
+                            if (file) {
+                              // Use navigate to redirect and pass file
+                              // Use window.history.state for file transfer
+                              // But React Router v6 supports location.state
+                              // So use useNavigate
+                              // Import useNavigate at top
+                              // @ts-ignore
+                              const navigate = require('react-router-dom').useNavigate();
+                              navigate('/resume-verification', { state: { resumeFile: file } });
+                            }
+                          }}
+                        />
+                      </label>
+                    </form>
                   </div>
                 </CardContent>
               </Card>
